@@ -15,39 +15,35 @@ sentiment: Sentimiento de la frase. Puede ser "positive", "negative" o "neutral"
 # pip3 install pyarrow pandas
 
 import os
+import csv
 import pandas as pd
 
-def create_dataset_csv(base_path, output_filename):
-    rows = []
-    
-    # Recorremos cada subcarpeta
-    for sentiment in ['negative', 'positive', 'neutral']:
-        sentiment_path = os.path.join(base_path, sentiment)
-        
-        # Recorremos cada archivo en la carpeta del sentimiento
-        for filename in os.listdir(sentiment_path):
-            file_path = os.path.join(sentiment_path, filename)
-            
-            # Leemos el contenido del archivo
-            with open(file_path, 'r') as file:
-                phrase = file.read().strip()
-            
-            # Añadimos la frase y el sentimiento al dataset
-            rows.append({'phrase': phrase, 'sentiment': sentiment})
 
-    # Convertimos la lista de tuplas a un dataframe
-    df = pd.DataFrame(rows, columns=['phrase', 'sentiment'])
-    
-    # Encontramos los índices del primer registro de cada valor en 'sentiment' ya que son problemáticos
-    first_indices = df.groupby('sentiment').head(1).index
-    # Eliminamos esos índices
-    df = df.drop(first_indices)
-    
-    # Guardamos
-    df.to_csv(output_filename, index=False)
+def create_test_and_train_dataset():
+    path = ["/train/", "/test/"]
+    output_file = ["train_dataset.csv", "test_dataset.csv"]
+    folders = ["negative", "positive", "neutral"]
+    i = 0
+    for file in output_file:
+        with open(file, "w", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["phrase", "sentiment"])
+        for folder in folders:
+            folder_path = "data" + path[i] + folder
+            with open(file, "a", newline="") as csvfile:
+                writer = csv.writer(csvfile)
 
-create_dataset_csv('train', 'train_dataset.csv')
-create_dataset_csv('test', 'test_dataset.csv')
+                for filename in os.listdir(folder_path):
+                    if filename.endswith(".txt"):
+                        file_path = os.path.join(folder_path, filename)
+                        with open(file_path, "r") as f:
+                            content = f.read()
+                            writer.writerow([content, folder])
+        i += 1
+    return
+
+
+create_test_and_train_dataset()
 
 # df = pd.read_csv('train_dataset.csv')
 # print(df["sentiment"].value_counts())
