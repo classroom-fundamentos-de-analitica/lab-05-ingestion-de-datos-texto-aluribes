@@ -45,9 +45,9 @@ def create_test_and_train_dataset():
 
 create_test_and_train_dataset()
 
-# df = pd.read_csv('train_dataset.csv')
-# print(df["sentiment"].value_counts())
+df = pd.read_csv('train_dataset.csv')
+print(df["sentiment"].value_counts())
 
-# df2 = pd.read_csv('test_dataset.csv')
-# print(df2["sentiment"].value_counts())
+df2 = pd.read_csv('test_dataset.csv')
+print(df2["sentiment"].value_counts())
 
